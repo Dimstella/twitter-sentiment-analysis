@@ -25,7 +25,7 @@ class MyStreamListener(tweepy.StreamListener):
         id_str = status.id_str
         user_name = status.user.screen_name
         created_at = status.created_at
-        text = deEmojify(status.text)  # Pre-processing the text
+        text = demoji(status.text)  # Pre-processing the text
         sentiment = TextBlob(text).sentiment
         polarity = sentiment.polarity
         subjectivity = sentiment.subjectivity
@@ -47,11 +47,7 @@ class MyStreamListener(tweepy.StreamListener):
 
         user_location = deEmojify(status.user.location)
         user_followers_count = status.user.followers_count
-        longitude = None
-        latitude = None
-        if status.coordinates:
-            longitude = status.coordinates['coordinates'][0]
-            latitude = status.coordinates['coordinates'][1]
+        
 
         tweet_count = status.user.statuses_count
         retweet_count = status.retweet_count
@@ -59,18 +55,17 @@ class MyStreamListener(tweepy.StreamListener):
         hash_list = re.findall(r"#(\w+)", text)
         hashtags = ' '.join([str(elem) for elem in hash_list])
         print(status.text)
-        print("Long: {}, Lati: {}".format(longitude, latitude))
 
 
         if list != []: #Avoid the no relevant tweets
             # Store all data in MySQL
             if mydb.is_connected():
                 mycursor = mydb.cursor()
-                sql = "INSERT INTO {} (id_str, atr, user_name, tweet_count, created_at, text, polarity, subjectivity, user_location, user_followers_count, longitude, latitude, retweet_count, hashtags, sentiment) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)".format(
+                q = "INSERT INTO {} (id_str, atr, user_name, tweet_count, created_at, text, polarity, subjectivity, user_location, user_followers_count, retweet_count, hashtags, sentiment) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)".format(
                     settings.TABLE_NAME)
-                val = (id_str, x, user_name, tweet_count, created_at, clean_tweet(text), polarity, subjectivity, user_location, \
-                        user_followers_count, longitude, latitude, retweet_count, hashtags, sentiment)
-                mycursor.execute(sql, val)
+                v = (id_str, x, user_name, tweet_count, created_at, clean(text), polarity, subjectivity, user_location, \
+                        user_followers_count, retweet_count, hashtags, sentiment)
+                mycursor.execute(q, v)
                 mydb.commit()
                 mycursor.close()
 
@@ -81,13 +76,13 @@ class MyStreamListener(tweepy.StreamListener):
             return False
 
 
-def clean_tweet(tweet): #Clean tweet text by removing links and special characters
+def clean(tweet): #Clean tweet text by removing links and special characters
 
     return ' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t]) \
                                 |(\w+:\/\/\S+)", " ", tweet).split())
 
 
-def deEmojify(text): #Remove emoji characters
+def demoji(text): #Remove emoji characters
 
     if text:
         return text.encode('ascii', 'ignore').decode('ascii')
