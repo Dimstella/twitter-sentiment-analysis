@@ -1,3 +1,6 @@
+# http://docs.tweepy.org/en/v3.4.0/streaming_how_to.html
+# https://towardsdatascience.com/real-time-twitter-sentiment-analysis-for-brand-improvement-and-topic-tracking-chapter-1-3-e02f7652d8ff
+
 import credentials  # Import api/access_token keys from credentials.py
 import settings  # Import related setting constants from settings.py
 import re
@@ -7,15 +10,7 @@ from textblob import TextBlob
 import mysql.connector
 
 
-
-# Streaming With Tweepy
-# http://docs.tweepy.org/en/v3.4.0/streaming_how_to.html#streaming-with-tweepy
-
-
-# Override tweepy.StreamListener to add logic to on_status
 class MyStreamListener(tweepy.StreamListener):
-
-    #Tweets are known as “status updates”. So the Status class in tweepy has properties describing the tweet.
 
     def on_status(self, status):  #Extract info from tweets
 
@@ -69,9 +64,9 @@ class MyStreamListener(tweepy.StreamListener):
                 mydb.commit()
                 mycursor.close()
 
-    def on_error(self, status_code): #Stop srcraping data as it exceed to the thresold.
+    def on_error(self, status_code): 
 
-        if status_code == 420:  # return False to disconnect the stream
+        if status_code == 420:  
 
             return False
 
