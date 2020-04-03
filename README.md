@@ -6,4 +6,4 @@ in order to confront the current U.S. President, Donald Trump, in the presidenti
 and Mike Bloomberg (Mayor of New York City from 2002 to 2013 and CEO of Bloomberg L.P.). What we are going to focus on, 
 is their respective popularity before and after the debate that was held in South Carolina at February 25, 2020.
 
-<img src="Graphs/graphic.jpg"  style="max-width:100%;">
+<img src="Graphs/graphic.jpg"  style="max-width:100%;" align="middle">
